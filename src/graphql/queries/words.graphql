@@ -1,0 +1,9 @@
+query FetchWords {
+  words {
+    id
+    word
+    definition
+    wordImageUrl
+    translation
+  }
+}

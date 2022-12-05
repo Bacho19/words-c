@@ -68,6 +68,25 @@ export type Word = {
   wordImageUrl?: Maybe<Scalars["String"]>;
 };
 
+export type CreateWordMutationVariables = Exact<{
+  definition: Scalars["String"];
+  word: Scalars["String"];
+  translation?: InputMaybe<Scalars["String"]>;
+  wordImageUrl?: InputMaybe<Scalars["String"]>;
+}>;
+
+export type CreateWordMutation = {
+  __typename?: "Mutation";
+  createWord: {
+    __typename?: "Word";
+    id: number;
+    word: string;
+    definition: string;
+    translation?: string | null;
+    wordImageUrl?: string | null;
+  };
+};
+
 export type FetchWordsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type FetchWordsQuery = {
@@ -327,6 +346,33 @@ export default {
   },
 } as unknown as IntrospectionQuery;
 
+export const CreateWordDocument = gql`
+  mutation CreateWord(
+    $definition: String!
+    $word: String!
+    $translation: String
+    $wordImageUrl: String
+  ) {
+    createWord(
+      definition: $definition
+      word: $word
+      translation: $translation
+      wordImageUrl: $wordImageUrl
+    ) {
+      id
+      word
+      definition
+      translation
+      wordImageUrl
+    }
+  }
+`;
+
+export function useCreateWordMutation() {
+  return Urql.useMutation<CreateWordMutation, CreateWordMutationVariables>(
+    CreateWordDocument
+  );
+}
 export const FetchWordsDocument = gql`
   query FetchWords {
     words {

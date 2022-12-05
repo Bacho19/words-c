@@ -23,6 +23,10 @@ const NavItem = ({ icon, route, children, ...rest }: NavItemProps) => {
         cursor="pointer"
         bg={asPath === route ? "blue.700" : ""}
         color={asPath === route ? "white" : ""}
+        _hover={{
+          color: asPath === route ? "white" : "blue.700",
+          transition: "0.2s",
+        }}
         {...rest}
       >
         {icon && <Icon mr="4" fontSize="16" as={icon} />}

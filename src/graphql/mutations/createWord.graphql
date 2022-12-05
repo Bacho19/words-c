@@ -1,0 +1,19 @@
+mutation CreateWord(
+  $definition: String!
+  $word: String!
+  $translation: String
+  $wordImageUrl: String
+) {
+  createWord(
+    definition: $definition
+    word: $word
+    translation: $translation
+    wordImageUrl: $wordImageUrl
+  ) {
+    id
+    word
+    definition
+    translation
+    wordImageUrl
+  }
+}

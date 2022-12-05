@@ -8,6 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 import { FiCompass, FiHome, FiSettings } from "react-icons/fi";
+import { BiAddToQueue, BiListUl } from "react-icons/bi";
+
 import NavItem from "./NavItem";
 
 interface SidebarProps extends BoxProps {
@@ -23,6 +25,8 @@ interface LinkItemProps {
 const LinkItems: LinkItemProps[] = [
   { name: "Home", icon: FiHome, route: "/" },
   { name: "Topics", icon: FiCompass, route: "/topics" },
+  { name: "All words", icon: BiListUl, route: "/all-words" },
+  { name: "Add word", icon: BiAddToQueue, route: "/add-word" },
   { name: "Settings", icon: FiSettings, route: "/settings" },
 ];
 

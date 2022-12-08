@@ -5,14 +5,18 @@ import {
   FormLabel,
   Input,
   Button,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useCreateWordMutation } from "../generated/graphql";
+import { useRouter } from "next/router";
 
 interface AddWordFormProps {}
 
 const AddWordForm: FC<AddWordFormProps> = () => {
   const [{ fetching }, createWord] = useCreateWordMutation();
+
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
@@ -21,15 +25,23 @@ const AddWordForm: FC<AddWordFormProps> = () => {
       translation: "",
       wordImageUrl: "",
     },
-    onSubmit: (values) => {
-      createWord(values);
+    onSubmit: async (values, { setErrors }) => {
+      const res = await createWord(values);
+      if (res.error) {
+        setErrors({
+          word: res.error.message,
+        });
+      } else {
+        formik.handleReset(null);
+        router.push("/all-words");
+      }
     },
   });
 
   return (
     <form onSubmit={formik.handleSubmit}>
       <VStack spacing={4} align="flex-start">
-        <FormControl>
+        <FormControl isRequired isInvalid={!!formik.errors.word}>
           <FormLabel htmlFor="word">Word</FormLabel>
           <Input
             id="word"
@@ -41,8 +53,9 @@ const AddWordForm: FC<AddWordFormProps> = () => {
             onChange={formik.handleChange}
             value={formik.values.word}
           />
+          <FormErrorMessage>{formik.errors.word}</FormErrorMessage>
         </FormControl>
-        <FormControl>
+        <FormControl isRequired>
           <FormLabel htmlFor="word">Definition</FormLabel>
           <Input
             id="definition"

@@ -23,10 +23,18 @@ export type Scalars = {
   Float: number;
 };
 
+export type Error = {
+  __typename?: "Error";
+  field: Scalars["String"];
+  message: Scalars["String"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createWord: Word;
   deleteWord: Scalars["Boolean"];
+  login: UserResponse;
+  register: UserResponse;
   updateWord?: Maybe<Word>;
 };
 
@@ -39,6 +47,14 @@ export type MutationCreateWordArgs = {
 
 export type MutationDeleteWordArgs = {
   id: Scalars["Float"];
+};
+
+export type MutationLoginArgs = {
+  options: UsernameAuthInput;
+};
+
+export type MutationRegisterArgs = {
+  options: UsernameAuthInput;
 };
 
 export type MutationUpdateWordArgs = {
@@ -59,11 +75,32 @@ export type QueryWordArgs = {
   id: Scalars["Float"];
 };
 
+export type User = {
+  __typename?: "User";
+  createdAt: Scalars["String"];
+  id: Scalars["Int"];
+  updatedAt: Scalars["String"];
+  username: Scalars["String"];
+};
+
+export type UserResponse = {
+  __typename?: "UserResponse";
+  errors?: Maybe<Array<Error>>;
+  user?: Maybe<User>;
+};
+
+export type UsernameAuthInput = {
+  password: Scalars["String"];
+  username: Scalars["String"];
+};
+
 export type Word = {
   __typename?: "Word";
+  createdAt: Scalars["String"];
   definition: Scalars["String"];
   id: Scalars["Int"];
   translation?: Maybe<Scalars["String"]>;
+  updatedAt: Scalars["String"];
   word: Scalars["String"];
   wordImageUrl?: Maybe<Scalars["String"]>;
 };
@@ -84,6 +121,29 @@ export type CreateWordMutation = {
     definition: string;
     translation?: string | null;
     wordImageUrl?: string | null;
+  };
+};
+
+export type LoginMutationVariables = Exact<{
+  options: UsernameAuthInput;
+}>;
+
+export type LoginMutation = {
+  __typename?: "Mutation";
+  login: {
+    __typename?: "UserResponse";
+    user?: {
+      __typename?: "User";
+      id: number;
+      username: string;
+      createdAt: string;
+      updatedAt: string;
+    } | null;
+    errors?: Array<{
+      __typename?: "Error";
+      field: string;
+      message: string;
+    }> | null;
   };
 };
 
@@ -112,6 +172,35 @@ export default {
     },
     subscriptionType: null,
     types: [
+      {
+        kind: "OBJECT",
+        name: "Error",
+        fields: [
+          {
+            name: "field",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "message",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+        ],
+        interfaces: [],
+      },
       {
         kind: "OBJECT",
         name: "Mutation",
@@ -175,6 +264,52 @@ export default {
             args: [
               {
                 name: "id",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: "login",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "OBJECT",
+                name: "UserResponse",
+                ofType: null,
+              },
+            },
+            args: [
+              {
+                name: "options",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: "register",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "OBJECT",
+                name: "UserResponse",
+                ofType: null,
+              },
+            },
+            args: [
+              {
+                name: "options",
                 type: {
                   kind: "NON_NULL",
                   ofType: {
@@ -283,8 +418,101 @@ export default {
       },
       {
         kind: "OBJECT",
+        name: "User",
+        fields: [
+          {
+            name: "createdAt",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "id",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "updatedAt",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "username",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+        ],
+        interfaces: [],
+      },
+      {
+        kind: "OBJECT",
+        name: "UserResponse",
+        fields: [
+          {
+            name: "errors",
+            type: {
+              kind: "LIST",
+              ofType: {
+                kind: "NON_NULL",
+                ofType: {
+                  kind: "OBJECT",
+                  name: "Error",
+                  ofType: null,
+                },
+              },
+            },
+            args: [],
+          },
+          {
+            name: "user",
+            type: {
+              kind: "OBJECT",
+              name: "User",
+              ofType: null,
+            },
+            args: [],
+          },
+        ],
+        interfaces: [],
+      },
+      {
+        kind: "OBJECT",
         name: "Word",
         fields: [
+          {
+            name: "createdAt",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
           {
             name: "definition",
             type: {
@@ -312,6 +540,17 @@ export default {
             type: {
               kind: "SCALAR",
               name: "Any",
+            },
+            args: [],
+          },
+          {
+            name: "updatedAt",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
             args: [],
           },
@@ -372,6 +611,26 @@ export function useCreateWordMutation() {
   return Urql.useMutation<CreateWordMutation, CreateWordMutationVariables>(
     CreateWordDocument
   );
+}
+export const LoginDocument = gql`
+  mutation Login($options: UsernameAuthInput!) {
+    login(options: $options) {
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 }
 export const FetchWordsDocument = gql`
   query FetchWords {

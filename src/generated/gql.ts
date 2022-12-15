@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "mutation CreateWord($definition: String!, $word: String!, $translation: String, $wordImageUrl: String) {\n  createWord(\n    definition: $definition\n    word: $word\n    translation: $translation\n    wordImageUrl: $wordImageUrl\n  ) {\n    id\n    word\n    definition\n    translation\n    wordImageUrl\n  }\n}": types.CreateWordDocument,
+    "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
     "query FetchWords {\n  words {\n    id\n    word\n    definition\n    wordImageUrl\n    translation\n  }\n}": types.FetchWordsDocument,
 };
 
@@ -21,6 +22,10 @@ const documents = {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "mutation CreateWord($definition: String!, $word: String!, $translation: String, $wordImageUrl: String) {\n  createWord(\n    definition: $definition\n    word: $word\n    translation: $translation\n    wordImageUrl: $wordImageUrl\n  ) {\n    id\n    word\n    definition\n    translation\n    wordImageUrl\n  }\n}"): (typeof documents)["mutation CreateWord($definition: String!, $word: String!, $translation: String, $wordImageUrl: String) {\n  createWord(\n    definition: $definition\n    word: $word\n    translation: $translation\n    wordImageUrl: $wordImageUrl\n  ) {\n    id\n    word\n    definition\n    translation\n    wordImageUrl\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

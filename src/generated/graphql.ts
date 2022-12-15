@@ -147,6 +147,29 @@ export type LoginMutation = {
   };
 };
 
+export type RegisterMutationVariables = Exact<{
+  options: UsernameAuthInput;
+}>;
+
+export type RegisterMutation = {
+  __typename?: "Mutation";
+  register: {
+    __typename?: "UserResponse";
+    user?: {
+      __typename?: "User";
+      id: number;
+      username: string;
+      createdAt: string;
+      updatedAt: string;
+    } | null;
+    errors?: Array<{
+      __typename?: "Error";
+      field: string;
+      message: string;
+    }> | null;
+  };
+};
+
 export type FetchWordsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type FetchWordsQuery = {
@@ -631,6 +654,28 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+}
+export const RegisterDocument = gql`
+  mutation Register($options: UsernameAuthInput!) {
+    register(options: $options) {
+      user {
+        id
+        username
+        createdAt
+        updatedAt
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useRegisterMutation() {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(
+    RegisterDocument
+  );
 }
 export const FetchWordsDocument = gql`
   query FetchWords {

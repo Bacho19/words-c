@@ -1,25 +1,25 @@
 import {
+  Box,
+  useColorModeValue,
   VStack,
   FormControl,
   FormLabel,
   Input,
   FormErrorMessage,
   Button,
-  Box,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import MainContainer from "../components/MainContainer";
 import Navbar from "../components/Navbar";
-import { useLoginMutation } from "../generated/graphql";
+import { useRegisterMutation } from "../generated/graphql";
 import { refactorErrors } from "../utils";
 
-interface LoginProps {}
+interface RegisterProps {}
 
-const Login: FC<LoginProps> = ({}) => {
-  const [{ fetching }, loginUser] = useLoginMutation();
+const Register: FC<RegisterProps> = ({}) => {
+  const [{ fetching }, registerUser] = useRegisterMutation();
 
   const router = useRouter();
 
@@ -27,18 +27,32 @@ const Login: FC<LoginProps> = ({}) => {
     initialValues: {
       username: "",
       password: "",
+      repeatPassword: "",
     },
     onSubmit: async (values, { setErrors }) => {
-      const res = await loginUser({
-        options: values,
+      if (values.password !== values.repeatPassword) {
+        console.log("wtf");
+        return setErrors({
+          repeatPassword: "passwords do not match",
+        });
+      }
+
+      const res = await registerUser({
+        options: {
+          username: values.username,
+          password: values.password,
+        },
       });
-      if (res.data?.login.errors) {
-        setErrors(refactorErrors(res.data.login.errors));
-      } else if (res.data?.login.user) {
-        router.push("/");
+
+      if (res.data?.register.errors) {
+        setErrors(refactorErrors(res.data.register.errors));
+      } else if (res.data?.register.user) {
+        router.push("/login");
       }
     },
   });
+
+  console.log(formik.errors);
 
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} minH="100vh">
@@ -75,6 +89,25 @@ const Login: FC<LoginProps> = ({}) => {
                 />
                 <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
               </FormControl>
+              <FormControl
+                isRequired
+                isInvalid={!!formik.errors.repeatPassword}
+              >
+                <FormLabel htmlFor="repeatPassword">Repeat Password</FormLabel>
+                <Input
+                  id="repeatPassword"
+                  name="repeatPassword"
+                  type="password"
+                  variant=""
+                  size="lg"
+                  placeholder="Repeat Password"
+                  onChange={formik.handleChange}
+                  value={formik.values.repeatPassword}
+                />
+                <FormErrorMessage>
+                  {formik.errors.repeatPassword}
+                </FormErrorMessage>
+              </FormControl>
               <Button
                 type="submit"
                 colorScheme="blue"
@@ -82,7 +115,7 @@ const Login: FC<LoginProps> = ({}) => {
                 size="lg"
                 isLoading={fetching}
               >
-                Login
+                Register
               </Button>
             </VStack>
           </form>
@@ -92,4 +125,4 @@ const Login: FC<LoginProps> = ({}) => {
   );
 };
 
-export default Login;
+export default Register;

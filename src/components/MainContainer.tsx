@@ -7,7 +7,7 @@ interface MainContainerProps {
 
 const MainContainer: FC<MainContainerProps> = ({ children }) => {
   return (
-    <Box maxW={650} mx="auto">
+    <Box maxW={650} mx="auto" px={4}>
       {children}
     </Box>
   );

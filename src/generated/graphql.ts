@@ -67,6 +67,7 @@ export type MutationUpdateWordArgs = {
 
 export type Query = {
   __typename?: "Query";
+  me?: Maybe<User>;
   word?: Maybe<Word>;
   words: Array<Word>;
 };
@@ -105,6 +106,12 @@ export type Word = {
   wordImageUrl?: Maybe<Scalars["String"]>;
 };
 
+export type RegularUserFragment = {
+  __typename?: "User";
+  id: number;
+  username: string;
+} & { " $fragmentName"?: "RegularUserFragment" };
+
 export type CreateWordMutationVariables = Exact<{
   definition: Scalars["String"];
   word: Scalars["String"];
@@ -132,13 +139,11 @@ export type LoginMutation = {
   __typename?: "Mutation";
   login: {
     __typename?: "UserResponse";
-    user?: {
-      __typename?: "User";
-      id: number;
-      username: string;
-      createdAt: string;
-      updatedAt: string;
-    } | null;
+    user?:
+      | ({ __typename?: "User" } & {
+          " $fragmentRefs"?: { RegularUserFragment: RegularUserFragment };
+        })
+      | null;
     errors?: Array<{
       __typename?: "Error";
       field: string;
@@ -155,19 +160,28 @@ export type RegisterMutation = {
   __typename?: "Mutation";
   register: {
     __typename?: "UserResponse";
-    user?: {
-      __typename?: "User";
-      id: number;
-      username: string;
-      createdAt: string;
-      updatedAt: string;
-    } | null;
+    user?:
+      | ({ __typename?: "User" } & {
+          " $fragmentRefs"?: { RegularUserFragment: RegularUserFragment };
+        })
+      | null;
     errors?: Array<{
       __typename?: "Error";
       field: string;
       message: string;
     }> | null;
   };
+};
+
+export type MeQueryVariables = Exact<{ [key: string]: never }>;
+
+export type MeQuery = {
+  __typename?: "Query";
+  me?:
+    | ({ __typename?: "User" } & {
+        " $fragmentRefs"?: { RegularUserFragment: RegularUserFragment };
+      })
+    | null;
 };
 
 export type FetchWordsQueryVariables = Exact<{ [key: string]: never }>;
@@ -399,6 +413,15 @@ export default {
         name: "Query",
         fields: [
           {
+            name: "me",
+            type: {
+              kind: "OBJECT",
+              name: "User",
+              ofType: null,
+            },
+            args: [],
+          },
+          {
             name: "word",
             type: {
               kind: "OBJECT",
@@ -607,7 +630,12 @@ export default {
     directives: [],
   },
 } as unknown as IntrospectionQuery;
-
+export const RegularUserFragmentDoc = gql`
+  fragment RegularUser on User {
+    id
+    username
+  }
+`;
 export const CreateWordDocument = gql`
   mutation CreateWord(
     $definition: String!
@@ -639,10 +667,7 @@ export const LoginDocument = gql`
   mutation Login($options: UsernameAuthInput!) {
     login(options: $options) {
       user {
-        id
-        username
-        createdAt
-        updatedAt
+        ...RegularUser
       }
       errors {
         field
@@ -650,6 +675,7 @@ export const LoginDocument = gql`
       }
     }
   }
+  ${RegularUserFragmentDoc}
 `;
 
 export function useLoginMutation() {
@@ -659,10 +685,7 @@ export const RegisterDocument = gql`
   mutation Register($options: UsernameAuthInput!) {
     register(options: $options) {
       user {
-        id
-        username
-        createdAt
-        updatedAt
+        ...RegularUser
       }
       errors {
         field
@@ -670,12 +693,30 @@ export const RegisterDocument = gql`
       }
     }
   }
+  ${RegularUserFragmentDoc}
 `;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(
     RegisterDocument
   );
+}
+export const MeDocument = gql`
+  query Me {
+    me {
+      ...RegularUser
+    }
+  }
+  ${RegularUserFragmentDoc}
+`;
+
+export function useMeQuery(
+  options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, "query">
+) {
+  return Urql.useQuery<MeQuery, MeQueryVariables>({
+    query: MeDocument,
+    ...options,
+  });
 }
 export const FetchWordsDocument = gql`
   query FetchWords {

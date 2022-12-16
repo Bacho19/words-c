@@ -13,12 +13,18 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
+    "fragment RegularUser on User {\n  id\n  username\n}": types.RegularUserFragmentDoc,
     "mutation CreateWord($definition: String!, $word: String!, $translation: String, $wordImageUrl: String) {\n  createWord(\n    definition: $definition\n    word: $word\n    translation: $translation\n    wordImageUrl: $wordImageUrl\n  ) {\n    id\n    word\n    definition\n    translation\n    wordImageUrl\n  }\n}": types.CreateWordDocument,
-    "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
-    "mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}": types.RegisterDocument,
+    "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}": types.LoginDocument,
+    "mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}": types.RegisterDocument,
+    "query Me {\n  me {\n    ...RegularUser\n  }\n}": types.MeDocument,
     "query FetchWords {\n  words {\n    id\n    word\n    definition\n    wordImageUrl\n    translation\n  }\n}": types.FetchWordsDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "fragment RegularUser on User {\n  id\n  username\n}"): (typeof documents)["fragment RegularUser on User {\n  id\n  username\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -26,11 +32,15 @@ export function graphql(source: "mutation CreateWord($definition: String!, $word
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Login($options: UsernameAuthInput!) {\n  login(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      id\n      username\n      createdAt\n      updatedAt\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"];
+export function graphql(source: "mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"): (typeof documents)["mutation Register($options: UsernameAuthInput!) {\n  register(options: $options) {\n    user {\n      ...RegularUser\n    }\n    errors {\n      field\n      message\n    }\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "query Me {\n  me {\n    ...RegularUser\n  }\n}"): (typeof documents)["query Me {\n  me {\n    ...RegularUser\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

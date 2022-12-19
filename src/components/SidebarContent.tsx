@@ -8,9 +8,11 @@ import {
 } from "@chakra-ui/react";
 import { IconType } from "react-icons";
 import { FiCompass, FiHome, FiSettings } from "react-icons/fi";
-import { BiAddToQueue, BiListUl } from "react-icons/bi";
+import { BiAddToQueue, BiListUl, BiLogOut } from "react-icons/bi";
 
 import NavItem from "./NavItem";
+import { useLogoutMutation } from "../generated/graphql";
+import { useRouter } from "next/router";
 
 interface SidebarProps extends BoxProps {
   onClose: () => void;
@@ -31,6 +33,10 @@ const LinkItems: LinkItemProps[] = [
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const [{}, logout] = useLogoutMutation();
+
+  const router = useRouter();
+
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -52,6 +58,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           {link.name}
         </NavItem>
       ))}
+      <NavItem
+        icon={BiLogOut}
+        onClick={() => {
+          logout({}).then(() => {
+            router.push("/login");
+          });
+        }}
+      >
+        Logout
+      </NavItem>
     </Box>
   );
 };

@@ -29,7 +29,7 @@ const LinkItems: LinkItemProps[] = [
   { name: "Topics", icon: FiCompass, route: "/topics" },
   { name: "All words", icon: BiListUl, route: "/all-words" },
   { name: "Add word", icon: BiAddToQueue, route: "/add-word" },
-  { name: "Settings", icon: FiSettings, route: "/settings" },
+  // { name: "Settings", icon: FiSettings, route: "/settings" },
 ];
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {

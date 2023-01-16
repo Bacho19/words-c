@@ -7,10 +7,13 @@ import {
   Button,
   Box,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC } from "react";
+import NextLink from "next/link";
 import MainContainer from "../components/MainContainer";
 import Navbar from "../components/Navbar";
 import { useLoginMutation } from "../generated/graphql";
@@ -25,13 +28,11 @@ const Login: FC<LoginProps> = ({}) => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      emailOrUsername: "",
       password: "",
     },
     onSubmit: async (values, { setErrors }) => {
-      const res = await loginUser({
-        options: values,
-      });
+      const res = await loginUser(values);
       if (res.data?.login.errors) {
         setErrors(refactorErrors(res.data.login.errors));
       } else if (res.data?.login.user) {
@@ -47,19 +48,26 @@ const Login: FC<LoginProps> = ({}) => {
         <Box mt={200}>
           <form onSubmit={formik.handleSubmit}>
             <VStack spacing={4} align="flex-start">
-              <FormControl isRequired isInvalid={!!formik.errors.username}>
-                <FormLabel htmlFor="username">Username</FormLabel>
+              <FormControl
+                isRequired
+                isInvalid={!!formik.errors.emailOrUsername}
+              >
+                <FormLabel htmlFor="emailOrUsername">
+                  Email or username
+                </FormLabel>
                 <Input
-                  id="username"
-                  name="username"
+                  id="emailOrUsername"
+                  name="emailOrUsername"
                   type="text"
                   variant=""
                   size="lg"
-                  placeholder="Username"
+                  placeholder="Email or username"
                   onChange={formik.handleChange}
-                  value={formik.values.username}
+                  value={formik.values.emailOrUsername}
                 />
-                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+                <FormErrorMessage>
+                  {formik.errors.emailOrUsername}
+                </FormErrorMessage>
               </FormControl>
               <FormControl isRequired isInvalid={!!formik.errors.password}>
                 <FormLabel htmlFor="password">Password</FormLabel>
@@ -75,6 +83,11 @@ const Login: FC<LoginProps> = ({}) => {
                 />
                 <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
               </FormControl>
+              <Flex justifyContent="flex-end" w="100%">
+                <Box>
+                  <NextLink href="/forgot-password">Forgot password?</NextLink>
+                </Box>
+              </Flex>
               <Button
                 type="submit"
                 colorScheme="blue"

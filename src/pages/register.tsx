@@ -25,13 +25,13 @@ const Register: FC<RegisterProps> = ({}) => {
 
   const formik = useFormik({
     initialValues: {
+      email: "",
       username: "",
       password: "",
       repeatPassword: "",
     },
     onSubmit: async (values, { setErrors }) => {
       if (values.password !== values.repeatPassword) {
-        console.log("wtf");
         return setErrors({
           repeatPassword: "passwords do not match",
         });
@@ -39,6 +39,7 @@ const Register: FC<RegisterProps> = ({}) => {
 
       const res = await registerUser({
         options: {
+          email: values.email,
           username: values.username,
           password: values.password,
         },
@@ -52,8 +53,6 @@ const Register: FC<RegisterProps> = ({}) => {
     },
   });
 
-  console.log(formik.errors);
-
   return (
     <Box bg={useColorModeValue("gray.100", "gray.900")} minH="100vh">
       <Navbar />
@@ -61,6 +60,21 @@ const Register: FC<RegisterProps> = ({}) => {
         <Box mt={200}>
           <form onSubmit={formik.handleSubmit}>
             <VStack spacing={4} align="flex-start">
+              <FormControl isRequired isInvalid={!!formik.errors.email}>
+                <FormLabel htmlFor="username">Email</FormLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  variant=""
+                  size="lg"
+                  placeholder="Email"
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
+                />
+                <FormErrorMessage>{formik.errors.username}</FormErrorMessage>
+              </FormControl>
+
               <FormControl isRequired isInvalid={!!formik.errors.username}>
                 <FormLabel htmlFor="username">Username</FormLabel>
                 <Input

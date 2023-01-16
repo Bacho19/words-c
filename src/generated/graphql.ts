@@ -31,8 +31,10 @@ export type Error = {
 
 export type Mutation = {
   __typename?: "Mutation";
+  changePassword: Scalars["Boolean"];
   createWord: Word;
   deleteWord: Scalars["Boolean"];
+  forgotPassword: Scalars["Boolean"];
   login: UserResponse;
   logout: Scalars["Boolean"];
   register: UserResponse;
@@ -50,8 +52,13 @@ export type MutationDeleteWordArgs = {
   id: Scalars["Float"];
 };
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars["String"];
+};
+
 export type MutationLoginArgs = {
-  options: UsernameAuthInput;
+  emailOrUsername: Scalars["String"];
+  password: Scalars["String"];
 };
 
 export type MutationRegisterArgs = {
@@ -80,6 +87,7 @@ export type QueryWordArgs = {
 export type User = {
   __typename?: "User";
   createdAt: Scalars["String"];
+  email: Scalars["String"];
   id: Scalars["Int"];
   updatedAt: Scalars["String"];
   username: Scalars["String"];
@@ -92,6 +100,7 @@ export type UserResponse = {
 };
 
 export type UsernameAuthInput = {
+  email: Scalars["String"];
   password: Scalars["String"];
   username: Scalars["String"];
 };
@@ -111,6 +120,7 @@ export type RegularUserFragment = {
   __typename?: "User";
   id: number;
   username: string;
+  email: string;
 } & { " $fragmentName"?: "RegularUserFragment" };
 
 export type CreateWordMutationVariables = Exact<{
@@ -132,8 +142,18 @@ export type CreateWordMutation = {
   };
 };
 
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars["String"];
+}>;
+
+export type ForgotPasswordMutation = {
+  __typename?: "Mutation";
+  forgotPassword: boolean;
+};
+
 export type LoginMutationVariables = Exact<{
-  options: UsernameAuthInput;
+  emailOrUsername: Scalars["String"];
+  password: Scalars["String"];
 }>;
 
 export type LoginMutation = {
@@ -248,6 +268,17 @@ export default {
         name: "Mutation",
         fields: [
           {
+            name: "changePassword",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
             name: "createWord",
             type: {
               kind: "NON_NULL",
@@ -317,6 +348,28 @@ export default {
             ],
           },
           {
+            name: "forgotPassword",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [
+              {
+                name: "email",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
+          {
             name: "login",
             type: {
               kind: "NON_NULL",
@@ -328,7 +381,17 @@ export default {
             },
             args: [
               {
-                name: "options",
+                name: "emailOrUsername",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+              {
+                name: "password",
                 type: {
                   kind: "NON_NULL",
                   ofType: {
@@ -484,6 +547,17 @@ export default {
         fields: [
           {
             name: "createdAt",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "email",
             type: {
               kind: "NON_NULL",
               ofType: {
@@ -650,6 +724,7 @@ export const RegularUserFragmentDoc = gql`
   fragment RegularUser on User {
     id
     username
+    email
   }
 `;
 export const CreateWordDocument = gql`
@@ -679,9 +754,21 @@ export function useCreateWordMutation() {
     CreateWordDocument
   );
 }
+export const ForgotPasswordDocument = gql`
+  mutation ForgotPassword($email: String!) {
+    forgotPassword(email: $email)
+  }
+`;
+
+export function useForgotPasswordMutation() {
+  return Urql.useMutation<
+    ForgotPasswordMutation,
+    ForgotPasswordMutationVariables
+  >(ForgotPasswordDocument);
+}
 export const LoginDocument = gql`
-  mutation Login($options: UsernameAuthInput!) {
-    login(options: $options) {
+  mutation Login($emailOrUsername: String!, $password: String!) {
+    login(emailOrUsername: $emailOrUsername, password: $password) {
       user {
         ...RegularUser
       }

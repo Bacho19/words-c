@@ -31,7 +31,7 @@ export type Error = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  changePassword: Scalars["Boolean"];
+  changePassword: UserResponse;
   createWord: Word;
   deleteWord: Scalars["Boolean"];
   forgotPassword: Scalars["Boolean"];
@@ -39,6 +39,11 @@ export type Mutation = {
   logout: Scalars["Boolean"];
   register: UserResponse;
   updateWord?: Maybe<Word>;
+};
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars["String"];
+  token: Scalars["String"];
 };
 
 export type MutationCreateWordArgs = {
@@ -122,6 +127,28 @@ export type RegularUserFragment = {
   username: string;
   email: string;
 } & { " $fragmentName"?: "RegularUserFragment" };
+
+export type ChangePasswordMutationVariables = Exact<{
+  newPassword: Scalars["String"];
+  token: Scalars["String"];
+}>;
+
+export type ChangePasswordMutation = {
+  __typename?: "Mutation";
+  changePassword: {
+    __typename?: "UserResponse";
+    user?:
+      | ({ __typename?: "User" } & {
+          " $fragmentRefs"?: { RegularUserFragment: RegularUserFragment };
+        })
+      | null;
+    errors?: Array<{
+      __typename?: "Error";
+      field: string;
+      message: string;
+    }> | null;
+  };
+};
 
 export type CreateWordMutationVariables = Exact<{
   definition: Scalars["String"];
@@ -272,11 +299,33 @@ export default {
             type: {
               kind: "NON_NULL",
               ofType: {
-                kind: "SCALAR",
-                name: "Any",
+                kind: "OBJECT",
+                name: "UserResponse",
+                ofType: null,
               },
             },
-            args: [],
+            args: [
+              {
+                name: "newPassword",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+              {
+                name: "token",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
             name: "createWord",
@@ -727,6 +776,27 @@ export const RegularUserFragmentDoc = gql`
     email
   }
 `;
+export const ChangePasswordDocument = gql`
+  mutation ChangePassword($newPassword: String!, $token: String!) {
+    changePassword(newPassword: $newPassword, token: $token) {
+      user {
+        ...RegularUser
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+  ${RegularUserFragmentDoc}
+`;
+
+export function useChangePasswordMutation() {
+  return Urql.useMutation<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >(ChangePasswordDocument);
+}
 export const CreateWordDocument = gql`
   mutation CreateWord(
     $definition: String!
